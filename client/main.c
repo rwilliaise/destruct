@@ -1,5 +1,5 @@
 
-#include "shared.h"
+#include "sh_scene.h"
 #include "r_shared.h"
 #include "r_window.h"
 
@@ -17,6 +17,8 @@ int main(int argv, char** args) {
 
     r_Window window;
 
+    sh_Scene scene = {0};
+
     if (r_WindowInit(&window) < 0) {
         r_MsgBoxError("Failed to init window!");
         return -1;
@@ -29,6 +31,8 @@ int main(int argv, char** args) {
             r_WindowHandleEvent(&window, &e);
         }
     }
+
+    sh_SceneDestroy(&scene);
 
     r_WindowCleanup(&window);
     SDL_Quit();
