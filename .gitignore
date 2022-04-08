@@ -2,3 +2,5 @@
 /cmake-build-debug/
 /.idea/
 /cmake-build-debug-visual-studio/
+compile_commands.json
+/.cache/

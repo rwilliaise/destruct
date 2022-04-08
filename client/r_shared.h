@@ -1,7 +1,13 @@
-#pragma once
-
-#include "SDL.h"
 #include <GL/glew.h>
-#include <stdio.h>
+#include <GLFW/glfw3.h>
 
-void r_MsgBoxError(const char *message);
+class r_State {
+public:
+    r_State();
+    ~r_State();
+
+    void loop();
+
+private:
+    GLFWwindow *window;
+};
