@@ -1,26 +1,26 @@
 #include <vector>
 
-enum sh_ComponentType { _ };
+enum ComponentType { _ };
 
-typedef unsigned int sh_Entity;
+typedef unsigned int Entity;
 
-typedef struct sh_Component {
+typedef struct {
     void *data;
-    sh_ComponentType type;
-    sh_Entity owner;
-} sh_Component;
+    ComponentType type;
+    Entity owner;
+} Component;
 
-class sh_Scene {
+class Scene {
 public:
-    sh_Scene() = default;
+    Scene() = default;
 
-    inline sh_Entity addEntity() {
+    inline Entity addEntity() {
         return next++;
     }
 
-    sh_Component* addComponent(sh_Entity owner, void *data, sh_ComponentType);
+    Component* addComponent(Entity owner, void *data, ComponentType type);
 
 private:
-    std::vector<sh_Component*> components;
-    sh_Entity next;
+    std::vector<Component*> components;
+    Entity next = 0;
 };

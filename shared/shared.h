@@ -1,5 +1,3 @@
 
-enum sh_Error {
-    VIDEO_INIT_FAILURE
 
-};
+#define SH_VIDEO_INIT_FAILURE 0x01
