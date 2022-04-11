@@ -1,5 +1,5 @@
 
-add_library (destruct_sh sh_scene.cpp sh_scene.h shared.h sh_phys.h sh_phys.cpp)
+add_library (destruct_sh sh_scene.cpp sh_scene.h shared.h sh_phys.h sh_phys.cpp sh_xmlreader.cpp sh_xmlreader.h sh_reader.cpp sh_reader.h)
 include(SelectLibraryConfigurations)
 
 # TODO: non-vcpkg solution, 32-bit

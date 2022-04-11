@@ -1,18 +1,23 @@
 
-#include "state.h"
+#include "r_state.h"
 #include <stdexcept>
 #include "shared.h"
+#include "r_renderer.h"
 
 namespace render {
-    struct GLFWwindow *window;
+    namespace {
+        struct GLFWwindow *window;
+        Renderer *renderer;
 
-    void (*genericCb)(float) = nullptr;
+        void (*genericCb)(float) = nullptr;
+    }
 
-    int initialize() {
+    int initialize(Renderer& r) {
         if (glfwInit() != GLFW_TRUE) {
             return SH_VIDEO_INIT_FAILURE;
         }
 
+        renderer = &r;
         window = glfwCreateWindow(640, 480, "destruct", nullptr, nullptr);
         return 0;
     }
@@ -41,9 +46,10 @@ namespace render {
         while (!glfwWindowShouldClose(window)) {
             glClear(GL_COLOR_BUFFER_BIT);
 
-            // TODO: renderer
 
             delta = glfwGetTime() - last;
+
+            renderer->update((float) delta);
 
             if (genericCb != nullptr) {
                 genericCb((float) delta);

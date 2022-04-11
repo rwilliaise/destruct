@@ -2,15 +2,25 @@
 #include <cstdio>
 #include "sh_scene.h"
 #include "sh_phys.h"
-#include "state.h"
+#include "r_renderer.h"
+#include "r_state.h"
 
 int main() {
 
     try {
-        render::initialize();
-        phys::initialize();
+        Scene scene;
+        Renderer renderer(scene);
 
-        render::updateCallback(phys::update);
+        auto ent = scene.addEntity();
+
+        scene.addComponent(ent, (void*)"Test", ComponentType::RigidBody);
+
+        phys::initialize();
+        render::initialize(renderer);
+
+        render::updateCallback([](float delta) {
+            phys::update(delta);
+        });
 
         render::loop();
 

@@ -1,6 +1,8 @@
 #include <vector>
+#include <functional>
+#include <cstdarg>
 
-enum ComponentType { _ };
+enum ComponentType { RigidBody, Mesh };
 
 typedef unsigned int Entity;
 
@@ -19,6 +21,9 @@ public:
     }
 
     Component* addComponent(Entity owner, void *data, ComponentType type);
+
+    void forEach(const std::function<void (Component*)>& cb, int n, ...);
+    void forEach(const std::function<void (Component*)>& cb);
 
 private:
     std::vector<Component*> components;

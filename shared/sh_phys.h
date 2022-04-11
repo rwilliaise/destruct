@@ -7,7 +7,7 @@
 using namespace physx;
 
 namespace phys {
-    void initialize();
+    int initialize();
     void update(float delta);
     void release();
 }

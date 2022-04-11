@@ -1,5 +1,5 @@
 
-add_executable (destruct_cl main.cpp state.cpp state.h)
+add_executable (destruct_cl main.cpp r_state.cpp r_state.h r_renderer.h r_renderer.cpp)
 
 find_package (glfw3 CONFIG REQUIRED)
 find_package (GLEW REQUIRED)
