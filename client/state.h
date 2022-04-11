@@ -4,14 +4,9 @@
 #include <GLFW/glfw3.h>
 
 namespace render {
-    class State {
-    public:
-        State();
-        ~State();
 
-        void loop();
-
-    private:
-        struct GLFWwindow *window;
-    };
+    int initialize();
+    void updateCallback(void (*cb)(float));
+    void release();
+    void loop();
 }
