@@ -1,3 +1,0 @@
-
-
-#define SH_VIDEO_INIT_FAILURE 0x01
