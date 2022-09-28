@@ -1,6 +1,5 @@
 /build/
-/cmake-build-debug/
+/cmake-build-*/
 /.idea/
-/cmake-build-debug-visual-studio/
 compile_commands.json
 /.cache/
