@@ -3,7 +3,7 @@
 #define DESTRUCT_DISPLAY_H
 
 #include <memory>
-#include <GLFW/glfw3.h>
+#include "Render.h"
 
 namespace r {
 
@@ -13,6 +13,10 @@ namespace r {
 		
 		inline bool shouldClose() {
 			return glfwWindowShouldClose(this->win.get());
+		}
+
+		inline bool getKey(int key) {
+			return glfwGetKey(win.get(), key);
 		}
 
 		void poll();
