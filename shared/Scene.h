@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <bitset>
+#include <unordered_map>
 #include <inttypes.h>
 
 namespace sh {
@@ -12,20 +13,22 @@ namespace sh {
 	const auto MAX_COMPONENTS = 32;
 	// bit 0 reserved for claiming
 	using Entity = std::bitset<MAX_COMPONENTS>;
+	using EntityId = uint32_t;
 	using ComponentType = uint8_t;
+	using Components = std::array<void*, MAX_COMPONENTS - 1>;
 
 	class Scene {
 	public:
-		bool ClaimEntity(uint32_t& out);
-		void DropEntity(uint32_t ent);
+		bool ClaimEntity(EntityId& out);
+		void DropEntity(EntityId ent);
 
-		bool AddComponent(uint32_t ent, ComponentType t, void *data);
-		bool RemoveComponent(uint32_t ent, ComponentType t);
+		bool AddComponent(EntityId ent, ComponentType t, void *data);
+		bool RemoveComponent(EntityId ent, ComponentType t);
 
-		void *GetComponent(uint32_t ent, ComponentType t);
+		void *GetComponent(EntityId ent, ComponentType t);
 	private:
 		Entity entities[MAX_ENTITIES];
-		void *entComponents[MAX_ENTITIES][MAX_COMPONENTS - 1];
+		std::unordered_map<EntityId, Components> components;
 		uint32_t alive{};
 	};
 }
