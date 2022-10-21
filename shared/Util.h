@@ -8,6 +8,7 @@
 namespace sh {
 
 	btVector3 toBtVec(const glm::vec3 &vec);
+	glm::vec3 fromBtVec(const btVector3 &vec);
 } // sh
 
 #endif // DESTRUCT_UTIL_H
