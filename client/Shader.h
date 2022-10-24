@@ -35,7 +35,7 @@ namespace r {
       glUseProgram(prog);
     }
 
-    inline GLuint getUniform(std::string str) const {
+    inline GLint getUniform(std::string str) const {
       return glGetUniformLocation(prog, str.c_str());
     }
 

@@ -2,6 +2,7 @@
 #ifndef DESTRUCT_CAMERA_H
 #define DESTRUCT_CAMERA_H
 
+#include <glm/ext/matrix_transform.hpp>
 #include <glm/fwd.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,14 +17,14 @@ namespace cl {
   public:
     //Camera();
 
-    inline void recalculateView(float fovy, float aspect) {
-      view = glm::perspective(fovy, aspect, DESTRUCT_CAMERA_NEARZ, DESTRUCT_CAMERA_FARZ);
+    inline void recalculateProjection(float fovy, float aspect) {
+      projection = glm::perspective(fovy, aspect, DESTRUCT_CAMERA_NEARZ, DESTRUCT_CAMERA_FARZ);
     }
 
-    inline glm::mat4 getViewMatrix() { return view; }
+    inline glm::mat4 getProjectionMatrix() { return projection; }
 
   private:
-    glm::mat4 view;
+    glm::mat4 projection = glm::identity<glm::mat4>();
     glm::vec3 pos;
 
     // glm::quat rot;

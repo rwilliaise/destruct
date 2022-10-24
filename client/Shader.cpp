@@ -52,6 +52,8 @@ namespace r {
       std::cout << "Failed to link pipeline\n" << log << std::endl;
     }
 
+    glValidateProgram(prog);
+
     for (auto shader : shaders) {
       if (shader != 0) {
         glDeleteShader(shader);

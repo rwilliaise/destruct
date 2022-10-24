@@ -6,9 +6,12 @@
 #include "Util.h"
 #include "Camera.h"
 
+#include <GL/gl.h>
 #include <GLFW/glfw3.h>
 #include <cstdio>
 #include <glad/gl.h>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <stdio.h>
 
@@ -40,7 +43,11 @@ int main() {
 
   r::Display display;
   cl::Camera camera;
-  camera.recalculateView(glm::radians(70.f), 640.f/480.f);
+  camera.recalculateProjection(glm::radians(70.f), display.getAspect());
+
+  display.setFramebufferSizeCallback([&camera](int width, int height) {
+    camera.recalculateProjection(glm::radians(70.f), (float) width / height);
+  });
 
   glEnable(GL_DEBUG_OUTPUT);
   glDebugMessageCallback(rendererErrorCallback, 0);
@@ -54,10 +61,15 @@ int main() {
   pipeline.bindAttrib(0, "position");
   pipeline.link();
 
-  GLuint view = pipeline.getUniform("r_view");
+  glm::mat4 transformation = glm::identity<glm::mat4>();
+  transformation = glm::translate(transformation, glm::vec3(0, 0, -2));
+
+  GLint proj = pipeline.getUniform("projection");
+  GLint trans = pipeline.getUniform("transformation");
 
   pipeline.use();
-  glUniformMatrix4fv(view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
+  glUniformMatrix4fv(proj, 1, GL_FALSE, glm::value_ptr(camera.getProjectionMatrix()));
+  glUniformMatrix4fv(trans, 1, GL_FALSE, glm::value_ptr(transformation));
   r::unuse();
 
   r::Mesh mesh;
@@ -71,16 +83,20 @@ int main() {
   };
 
   mesh.loadVertexData(vertices);
-
   std::cout << mesh.getVertexCount() << std::endl;
 
 	while (!display.shouldClose()) {
     glClear(GL_COLOR_BUFFER_BIT);
 		glClearColor(1.f, 0.f, 0.f, 1.f);
+    
+    transformation = glm::rotate(transformation, glm::radians(1.f), glm::vec3(0.f, 1.f, 0.f));
 
+    pipeline.use();
+    glUniformMatrix4fv(trans, 1, GL_FALSE, glm::value_ptr(transformation));
     mesh.bind();
-    glDrawElements(GL_TRIANGLES, mesh.getVertexCount(), GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLES, 0, mesh.getVertexCount());
     mesh.release();
+    r::unuse();
     
 		display.poll();
 	}

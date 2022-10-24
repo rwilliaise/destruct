@@ -11,6 +11,15 @@ namespace r {
 		glfwMakeContextCurrent(win);
 		gladLoadGL((GLADloadfunc) glfwGetProcAddress);
 
+    glfwSetWindowUserPointer(win, this);
+    glfwSetFramebufferSizeCallback(win, [](GLFWwindow* win, int width, int height) {
+      Display *display = static_cast<Display*>(glfwGetWindowUserPointer(win));
+      glViewport(0, 0, width, height);
+      if (display->cb != nullptr) {
+        display->cb(width, height);
+      }
+    });
+
 		this->win = std::shared_ptr<GLFWwindow>(win, [](GLFWwindow* ptr) {
 			glfwDestroyWindow(ptr);		
 		});
