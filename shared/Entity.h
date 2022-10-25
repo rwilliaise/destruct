@@ -2,7 +2,8 @@
 #ifndef DESTRUCT_ENTITY_H
 #define DESTRUCT_ENTITY_H
 
-#include <LinearMath/btVector3.h>
+#include <glm/common.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 namespace sh {
 
@@ -11,8 +12,8 @@ namespace sh {
 		Entity();
 		
 	private:
-		btVector3 pos;
-
+    glm::vec3 pos;
+    glm::quat quat;
 	};
 } // sh
 
