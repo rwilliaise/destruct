@@ -9,11 +9,16 @@ namespace sh {
 
 	class Entity {
 	public:
-		Entity();
+		// Entity();
+
+    inline glm::mat4 toModelMatrix() {
+      glm::mat4 translate = glm::translate(glm::identity<glm::mat4>(), pos);
+      glm::mat4 rotate = glm::mat4_cast(rot);
+      return translate * rotate;
+    }
 		
-	private:
-    glm::vec3 pos;
-    glm::quat quat;
+    glm::vec3 pos = glm::vec3();
+    glm::quat rot = glm::quat();
 	};
 } // sh
 

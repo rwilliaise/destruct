@@ -1,4 +1,5 @@
 
+#include "Entity.h"
 #include "Render.h"
 #include "Display.h"
 #include "Mesh.h"
@@ -19,7 +20,7 @@ static auto shaderCloudVert = VEC_EMBEDDED_RESOURCE(cloud_vert);
 static auto shaderCloudFrag = VEC_EMBEDDED_RESOURCE(cloud_frag);
 
 static void displayErrorCallback(int errorCode, const char *description) {
-  printf("GLFW ERROR (%d): %s\n", errorCode, description);
+  std::cerr << "GLFW ERROR (" << errorCode << "): " << description << std::endl;
 }
 
 static void rendererErrorCallback(GLenum source,
@@ -45,14 +46,15 @@ int main() {
   cl::Camera camera;
   camera.recalculateProjection(glm::radians(70.f), display.getAspect());
 
-  display.setFramebufferSizeCallback([&camera](int width, int height) {
-    camera.recalculateProjection(glm::radians(70.f), (float) width / height);
-  });
-
   glEnable(GL_DEBUG_OUTPUT);
   glDebugMessageCallback(rendererErrorCallback, 0);
 
   r::Pipeline pipeline;
+
+  display.setFramebufferSizeCallback([&camera, &pipeline](int width, int height) {
+    camera.recalculateProjection(glm::radians(70.f), (float) width / height);
+    camera.loadPipeline(pipeline);
+  });
 
   std::string vert = std::string(shaderCloudVert.data(), shaderCloudVert.size());
   std::string frag = std::string(shaderCloudFrag.data(), shaderCloudFrag.size());
@@ -61,16 +63,10 @@ int main() {
   pipeline.bindAttrib(0, "position");
   pipeline.link();
 
-  glm::mat4 transformation = glm::identity<glm::mat4>();
-  transformation = glm::translate(transformation, glm::vec3(0, 0, -2));
+  camera.loadPipeline(pipeline);
 
-  GLint proj = pipeline.getUniform("projection");
-  GLint trans = pipeline.getUniform("transformation");
-
-  pipeline.use();
-  glUniformMatrix4fv(proj, 1, GL_FALSE, glm::value_ptr(camera.getProjectionMatrix()));
-  glUniformMatrix4fv(trans, 1, GL_FALSE, glm::value_ptr(transformation));
-  r::unuse();
+  sh::Entity entity;
+  entity.pos = glm::vec3(0, 0, -2);
 
   r::Mesh mesh;
   std::vector<float> vertices = {
@@ -88,11 +84,12 @@ int main() {
 	while (!display.shouldClose()) {
     glClear(GL_COLOR_BUFFER_BIT);
 		glClearColor(1.f, 0.f, 0.f, 1.f);
-    
-    transformation = glm::rotate(transformation, glm::radians(1.f), glm::vec3(0.f, 1.f, 0.f));
 
     pipeline.use();
-    glUniformMatrix4fv(trans, 1, GL_FALSE, glm::value_ptr(transformation));
+    entity.pos += glm::vec3(0, 0, -0.1f);
+
+    pipeline.transform(entity);
+
     mesh.bind();
     glDrawArrays(GL_TRIANGLES, 0, mesh.getVertexCount());
     mesh.release();

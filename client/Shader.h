@@ -2,6 +2,7 @@
 #ifndef DESTRUCT_SHADER_H
 #define DESTRUCT_SHADER_H
 
+#include "Entity.h"
 #include "Render.h"
 #include <glad/gl.h>
 #include <string>
@@ -26,6 +27,8 @@ namespace r {
 
     void compile(std::string vert, std::string frag); 
     void link() const;
+
+    void transform(sh::Entity& ent);
 
     inline void bindAttrib(GLuint loc, std::string name) const {
       glBindAttribLocation(prog, loc, name.c_str());

@@ -2,6 +2,7 @@
 #include "Shader.h"
 #include "glad/gl.h"
 #include <fstream>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -27,6 +28,12 @@ static GLuint compileShader(GLenum type, std::string source) {
 }
 
 namespace r {
+
+  void Pipeline::transform(sh::Entity &ent) {
+    glm::mat4 mat = ent.toModelMatrix();
+    GLint trans = getUniform("transformation");
+    glUniformMatrix4fv(trans, 1, GL_FALSE, glm::value_ptr(mat));
+  }
   
   void Pipeline::compile(std::string vert, std::string frag) {
     GLuint vertShader = compileShader(GL_VERTEX_SHADER, vert);
