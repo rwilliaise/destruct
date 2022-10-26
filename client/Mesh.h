@@ -20,8 +20,9 @@ namespace r {
 
     void loadIndices(std::vector<int> index);
     void loadVertexData(std::vector<float> vert);
+    void loadUVData(std::vector<float> uv);
 
-    inline void bind() {
+    inline void bind() const {
       glBindVertexArray(vao);
 
       for (auto attrib : attributes) {
@@ -29,7 +30,7 @@ namespace r {
       }
     }
 
-    inline void release() {
+    inline void release() const {
       for (auto attrib : attributes) {
         glDisableVertexAttribArray(attrib);
       }
@@ -45,6 +46,9 @@ namespace r {
     GLsizei vertexCount = 0;
 
     std::vector<GLuint> attributes;
+
+    template<typename T>
+    void loadStaticData(const std::vector<T>& vec, int size, size_t attrib, GLenum type) const;
   };
 } // r
 

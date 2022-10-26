@@ -23,16 +23,25 @@ namespace r {
     release();
   }
 
-  void Mesh::loadVertexData(std::vector<float> vert) {
-    attributes.push_back(0);
+  template<typename T>
+  void Mesh::loadStaticData(const std::vector<T>& vec, int size, size_t vboIdx, GLenum type) const {
     bind();
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, vert.size() * sizeof(float), vert.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[vboIdx]);
+    glBufferData(GL_ARRAY_BUFFER, vec.size() * sizeof(T), vec.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(vboIdx, size, type, GL_FALSE, 0, nullptr);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     release();
   }
 
+  void Mesh::loadVertexData(std::vector<float> vert) {
+    attributes.emplace_back(0);
+    loadStaticData(vert, 3, 0, GL_FLOAT);
+  }
+
+  void Mesh::loadUVData(std::vector<float> uv) {
+    //attributes.emplace_back(1);
+    loadStaticData(uv, 2, 1, GL_FLOAT);
+  }
 } // r
 
 

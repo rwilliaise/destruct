@@ -79,6 +79,13 @@ int main() {
     0.5f, 0.5f, 0.f,
   };
 
+  std::vector<float> uv = {
+    0.f, 0.f,
+    0.f, 1.f,
+    1.f, 0.f,
+    1.f, 1.f,
+  };
+
   std::vector<int> index = {
     0,1,3,
     3,1,2
@@ -86,6 +93,7 @@ int main() {
 
   mesh.loadIndices(index);
   mesh.loadVertexData(vertices);
+  mesh.loadUVData(uv);
   std::cout << mesh.getVertexCount() << std::endl;
 
   glm::vec3 up = glm::vec3(0.f, 1.f, 0.f);

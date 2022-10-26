@@ -10,6 +10,7 @@ add_resources(cloud_vert cloud.vert)
 
 add_subdirectory(thirdparty/glad)
 add_subdirectory(thirdparty/glfw)
+add_subdirectory(thirdparty/libpng)
 
 find_package(OpenGL REQUIRED)
 find_package(glm REQUIRED)
@@ -25,6 +26,6 @@ target_link_libraries(shared PRIVATE BulletSoftBody BulletDynamics BulletCollisi
 target_include_directories(shared PRIVATE ${GLM_INCLUDE_DIRS} ${BULLET_INCLUDE_DIR})
 
 add_executable(client ${cloud_frag} ${cloud_vert} client/Camera.cpp client/Camera.h client/main.cpp client/Mesh.cpp client/Mesh.h client/Shader.cpp client/Shader.h client/Render.h client/Display.cpp client/Display.h)
-target_link_libraries(client PRIVATE OpenGL::GL glad glm glfw)
+target_link_libraries(client PRIVATE OpenGL::GL glad glm glfw png_static)
 target_include_directories(client PRIVATE ${BULLET_INCLUDE_DIR} shared)
 
