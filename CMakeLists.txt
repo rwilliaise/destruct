@@ -24,7 +24,7 @@ add_library(shared STATIC shared/PhysManager.cpp shared/PhysManager.h shared/Ent
 target_link_libraries(shared PRIVATE BulletSoftBody BulletDynamics BulletCollision glm Bullet3Common LinearMath)
 target_include_directories(shared PRIVATE ${GLM_INCLUDE_DIRS} ${BULLET_INCLUDE_DIR})
 
-add_executable(client ${cloud_frag} ${cloud_vert} client/main.cpp client/Mesh.cpp client/Mesh.h client/Shader.cpp client/Shader.h client/Render.h client/Display.cpp client/Display.h)
+add_executable(client ${cloud_frag} ${cloud_vert} client/Camera.cpp client/Camera.h client/main.cpp client/Mesh.cpp client/Mesh.h client/Shader.cpp client/Shader.h client/Render.h client/Display.cpp client/Display.h)
 target_link_libraries(client PRIVATE OpenGL::GL glad glm glfw)
 target_include_directories(client PRIVATE ${BULLET_INCLUDE_DIR} shared)
 

@@ -12,7 +12,10 @@
 #include <cstdio>
 #include <glad/gl.h>
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/ext/quaternion_transform.hpp>
+#include <glm/ext/quaternion_trigonometric.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <stdio.h>
 
@@ -53,7 +56,7 @@ int main() {
 
   display.setFramebufferSizeCallback([&camera, &pipeline](int width, int height) {
     camera.recalculateProjection(glm::radians(70.f), (float) width / height);
-    camera.loadPipeline(pipeline);
+    camera.loadProjection(pipeline);
   });
 
   std::string vert = std::string(shaderCloudVert.data(), shaderCloudVert.size());
@@ -63,7 +66,7 @@ int main() {
   pipeline.bindAttrib(0, "position");
   pipeline.link();
 
-  camera.loadPipeline(pipeline);
+  camera.loadProjection(pipeline);
 
   sh::Entity entity;
   entity.pos = glm::vec3(0, 0, -2);
@@ -73,26 +76,36 @@ int main() {
     -0.5f, 0.5f, 0.f,
     -0.5f, -0.5f, 0.f,
     0.5f, -0.5f, 0.f,
-    0.5f, -0.5f, 0.f,
     0.5f, 0.5f, 0.f,
-    -0.5f, 0.5f, 0.f
   };
 
+  std::vector<int> index = {
+    0,1,3,
+    3,1,2
+  };  
+
+  mesh.loadIndices(index);
   mesh.loadVertexData(vertices);
   std::cout << mesh.getVertexCount() << std::endl;
+
+  glm::vec3 up = glm::vec3(0.f, 1.f, 0.f);
+  glm::quat uprot = glm::angleAxis(glm::radians(1.f), up);
 
 	while (!display.shouldClose()) {
     glClear(GL_COLOR_BUFFER_BIT);
 		glClearColor(1.f, 0.f, 0.f, 1.f);
 
-    pipeline.use();
     entity.pos += glm::vec3(0, 0, -0.1f);
+    camera.rot *= uprot;
+    pipeline.use();
 
+    camera.loadView(pipeline);
     pipeline.transform(entity);
 
     mesh.bind();
-    glDrawArrays(GL_TRIANGLES, 0, mesh.getVertexCount());
+    glDrawElements(GL_TRIANGLES, mesh.getVertexCount(), GL_UNSIGNED_INT, 0);
     mesh.release();
+
     r::unuse();
     
 		display.poll();

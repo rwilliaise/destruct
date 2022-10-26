@@ -3,10 +3,9 @@
 #define DESTRUCT_CAMERA_H
 
 #include "Shader.h"
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/fwd.hpp>
+
+#include <glm/ext/quaternion_trigonometric.hpp>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #define DESTRUCT_CAMERA_NEARZ 0.1f
@@ -17,6 +16,10 @@ namespace cl {
   class Camera {
   public:
     //Camera();
+    
+    glm::mat4 getViewMatrix() const;
+    void loadProjection(r::Pipeline& pipeline) const;
+    void loadView(r::Pipeline& pipeline) const;
 
     inline void recalculateProjection(float fovy, float aspect) {
       projection = glm::perspective(fovy, aspect, DESTRUCT_CAMERA_NEARZ, DESTRUCT_CAMERA_FARZ);
@@ -24,19 +27,10 @@ namespace cl {
 
     inline glm::mat4 getProjectionMatrix() const { return projection; }
 
-    inline void loadPipeline(r::Pipeline& pipeline) const {
-      GLint proj = pipeline.getUniform("projection");
-
-      pipeline.use();
-      glUniformMatrix4fv(proj, 1, GL_FALSE, glm::value_ptr(getProjectionMatrix()));
-      r::unuse();
-    }
-
+    glm::vec3 pos = glm::vec3();
+    glm::quat rot = glm::angleAxis(glm::radians(0.f), glm::vec3(0.f, 0.f, -1.f));
   private:
     glm::mat4 projection = glm::identity<glm::mat4>();
-    glm::vec3 pos;
-
-    // glm::quat rot;
   };
 }
 

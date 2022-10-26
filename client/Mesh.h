@@ -18,6 +18,7 @@ namespace r {
     Mesh& operator=(const Mesh& mesh) noexcept = delete;
     Mesh& operator=(Mesh&& mesh) noexcept = default;
 
+    void loadIndices(std::vector<int> index);
     void loadVertexData(std::vector<float> vert);
 
     inline void bind() {
