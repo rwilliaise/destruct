@@ -20,7 +20,10 @@ namespace r {
 
     void loadIndices(std::vector<int> index);
     void loadVertexData(std::vector<float> vert);
+    void loadNormalData(std::vector<float> norm);
     void loadUVData(std::vector<float> uv);
+
+    void loadFromMemory(std::vector<char> bytes);
 
     inline void bind() const {
       glBindVertexArray(vao);
@@ -42,7 +45,7 @@ namespace r {
 
   private:
     GLuint vao;
-    GLuint vbo[3];
+    GLuint vbo[4];
     GLsizei vertexCount = 0;
 
     std::vector<GLuint> attributes;

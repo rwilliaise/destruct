@@ -4,6 +4,7 @@
 
 #include "Render.h"
 
+#include <glad/gl.h>
 #include <vector>
 
 namespace r {
@@ -19,6 +20,14 @@ namespace r {
     Texture& operator=(Texture&&) noexcept = default;
     
     void loadFromBytes(std::vector<uint8_t> bytes);
+
+    inline void bind() const {
+      glBindTexture(GL_TEXTURE_2D, id);
+    }
+
+    inline void release() const {
+      glBindTexture(GL_TEXTURE_2D, 0);
+    }
 
   private:
     GLuint id;

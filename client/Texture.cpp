@@ -1,6 +1,8 @@
 
 #include "Texture.h"
+
 #include <glad/gl.h>
+#include <iostream>
 #include <png.h>
 
 namespace r {
@@ -14,24 +16,28 @@ namespace r {
   }
 
   void Texture::loadFromBytes(std::vector<uint8_t> bytes) {
-    png_image image;
-    image.format = PNG_FORMAT_RGBA;
+    png_image image{ .opaque = nullptr, .version = PNG_IMAGE_VERSION, };
+    bool success = png_image_begin_read_from_memory(&image, bytes.data(), bytes.size() * sizeof(char));
 
-    png_image_begin_read_from_memory(&image, bytes.data(), bytes.size() * sizeof(char));
-
-    auto width = image.width;
-    auto height = image.height;
-
-    uint8_t imageData[width][height];
-    
-    for (int i = 0; i < height; i++) {
-      auto row = imageData[i];
-
-      // png_read_row(&image, row, 0);
+    if (!success) { 
+      std::cerr << "libpng error: " << image.message << std::endl;
+      return;
     }
 
-    glBindTexture(GL_TEXTURE_2D, id);
+    image.format = PNG_FORMAT_RGB;
+    
+    uint8_t buff[PNG_IMAGE_SIZE(image)];
+    success = png_image_finish_read(&image, nullptr, buff, 0, nullptr);
 
-    glBindTexture(GL_TEXTURE_2D, 0);
+    if (!success) {
+      png_image_free(&image);
+      return;
+    }
+
+    bind();
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, buff);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    release();
   }
 } // r

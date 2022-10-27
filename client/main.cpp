@@ -4,6 +4,7 @@
 #include "Display.h"
 #include "Mesh.h"
 #include "Shader.h"
+#include "Texture.h"
 #include "Util.h"
 #include "Camera.h"
 
@@ -17,10 +18,13 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
+#include <stdint.h>
 #include <stdio.h>
 
 static auto shaderCloudVert = VEC_EMBEDDED_RESOURCE(cloud_vert);
 static auto shaderCloudFrag = VEC_EMBEDDED_RESOURCE(cloud_frag);
+static auto gregolanJrTxt = VEC_EMBEDDED_RESOURCE(gregolan_jr_png);
+static auto gregolanJr = VEC_EMBEDDED_RESOURCE(gregolan_jr_obj);
 
 static void displayErrorCallback(int errorCode, const char *description) {
   std::cerr << "GLFW ERROR (" << errorCode << "): " << description << std::endl;
@@ -72,28 +76,10 @@ int main() {
   entity.pos = glm::vec3(0, 0, -2);
 
   r::Mesh mesh;
-  std::vector<float> vertices = {
-    -0.5f, 0.5f, 0.f,
-    -0.5f, -0.5f, 0.f,
-    0.5f, -0.5f, 0.f,
-    0.5f, 0.5f, 0.f,
-  };
+  mesh.loadFromMemory(gregolanJr);
 
-  std::vector<float> uv = {
-    0, 0,
-    0, 1,
-    1, 0,
-    1, 1,
-  };
-
-  std::vector<int> index = {
-    0,1,3,
-    3,1,2
-  };  
-
-  mesh.loadIndices(index);
-  mesh.loadVertexData(vertices);
-  mesh.loadUVData(uv);
+  r::Texture texture;
+  texture.loadFromBytes(std::vector<uint8_t>(gregolanJrTxt.begin(), gregolanJrTxt.end()));
 
   std::cout << mesh.getVertexCount() << std::endl;
 
@@ -104,15 +90,18 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT);
 		glClearColor(1.f, 0.f, 0.f, 1.f);
 
-    entity.pos += glm::vec3(0, 0, -0.1f);
-    camera.rot *= uprot;
+//    entity.pos += glm::vec3(0, 0, -0.1f);
+//    camera.rot *= uprot;
     pipeline.use();
 
     camera.loadView(pipeline);
     pipeline.transform(entity);
 
     mesh.bind();
+    glActiveTexture(GL_TEXTURE0);
+    texture.bind();
     glDrawElements(GL_TRIANGLES, mesh.getVertexCount(), GL_UNSIGNED_INT, 0);
+    texture.release();
     mesh.release();
 
     r::unuse();
