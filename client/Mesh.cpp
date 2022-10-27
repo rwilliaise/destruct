@@ -39,7 +39,7 @@ namespace r {
   }
 
   void Mesh::loadUVData(std::vector<float> uv) {
-    //attributes.emplace_back(1);
+    attributes.emplace_back(1);
     loadStaticData(uv, 2, 1, GL_FLOAT);
   }
 } // r
