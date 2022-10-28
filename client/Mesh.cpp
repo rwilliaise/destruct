@@ -92,7 +92,7 @@ namespace r {
         std::istringstream stream(line.substr(3));
 
         stream >> uv.x; stream >> uv.y;
-        uv.x = 1 - uv.x;
+        uv.x = uv.x;
         uv.y = 1 - uv.y;
 
         uvs.push_back(uv);
@@ -123,15 +123,13 @@ namespace r {
       GLuint vIdx = elements[i];
       GLuint uvIdx = elements[i + 1];
       GLuint nIdx = elements[i + 2];
-      std::cout << "DEBUG: vIdx = " << vIdx << std::endl;
       
       indices.push_back(vIdx);
-      std::cout << "DEBUG: loaded index" << std::endl;
+      
       uvOut[vIdx] = uvs[uvIdx];
-      std::cout << "DEBUG: loaded uv" << std::endl;
       normalOut[vIdx] = normals[nIdx];
-      std::cout << "DEBUG: loaded normals" << std::endl;
     }
+
     
     loadIndices(indices);
     loadVertexData(vertices);

@@ -74,7 +74,7 @@ int main() {
 
   sh::Entity entity;
   entity.pos = glm::vec3(0, 0, -10);
-  entity.rot = glm::angleAxis(glm::radians(-20.f), glm::vec3(1,0,0));
+  //entity.rot = glm::angleAxis(glm::radians(-20.f), glm::vec3(1,0,0));
 
   r::Mesh mesh;
   mesh.loadFromMemory(gregolanJr);
@@ -92,7 +92,7 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 
-    glm::quat lookyUpDown = glm::angleAxis(glm::radians(glm::sin((float) glfwGetTime() * 5.f) * 2), glm::vec3(1.f, 0.f, 0.f));
+    glm::quat lookyUpDown = glm::angleAxis(glm::radians(glm::sin((float) glfwGetTime() * 5.f)), glm::vec3(1.f, 0.f, 0.f));
     entity.rot *= lookyUpDown;
     entity.rot *= uprot;
     

@@ -17,9 +17,9 @@
   }                                                                                               \
   std::cout << "}" << std::endl
 
-#define VEC_DBG_S(VECTOR, CAST) std::cout << "DEBUG: " #VECTOR " (" << VECTOR.size() << " elements) = {"; \
+#define VEC_DBG_S(VECTOR, CAST) std::cout << "DEBUG: " #VECTOR " (" << VECTOR.size() << " elements) = {" << std::endl; \
   for (auto dbgElement_ ## VECTOR : VECTOR ) {                                                      \
-    std::cout << CAST(dbgElement_ ## VECTOR) << ", ";                                                     \
+    std::cout << "  " << CAST(dbgElement_ ## VECTOR) << "," << std::endl;                                   \
   }                                                                                                 \
   std::cout << "}" << std::endl
 
