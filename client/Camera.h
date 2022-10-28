@@ -3,6 +3,7 @@
 #define DESTRUCT_CAMERA_H
 
 #include "Shader.h"
+#include "Util.h"
 
 #include <glm/ext/quaternion_trigonometric.hpp>
 #include <glm/glm.hpp>
@@ -28,7 +29,7 @@ namespace cl {
     inline glm::mat4 getProjectionMatrix() const { return projection; }
 
     glm::vec3 pos = glm::vec3();
-    glm::quat rot = glm::angleAxis(glm::radians(0.f), glm::vec3(0.f, 0.f, -1.f));
+    glm::quat rot = sh::QUAT_FORWARD;
   private:
     glm::mat4 projection = glm::identity<glm::mat4>();
   };

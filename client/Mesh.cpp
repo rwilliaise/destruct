@@ -1,5 +1,6 @@
 
 #include "Mesh.h"
+#include "Util.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -7,6 +8,7 @@
 #include <glad/gl.h>
 #include <glm/ext/vector_float2.hpp>
 #include <glm/ext/vector_float3.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <sstream>
 #include <stdio.h>
@@ -44,17 +46,17 @@ namespace r {
     release();
   }
 
-  void Mesh::loadVertexData(std::vector<float> vert) {
+  void Mesh::loadVertexData(std::vector<glm::vec3> vert) {
     attributes.emplace_back(0);
     loadStaticData(vert, 3, 0, GL_FLOAT);
   }
 
-  void Mesh::loadUVData(std::vector<float> uv) {
+  void Mesh::loadUVData(std::vector<glm::vec2> uv) {
     attributes.emplace_back(1);
     loadStaticData(uv, 2, 1, GL_FLOAT);
   }
 
-  void Mesh::loadNormalData(std::vector<float> norm) {
+  void Mesh::loadNormalData(std::vector<glm::vec3> norm) {
     attributes.emplace_back(2);
     loadStaticData(norm, 3, 2, GL_FLOAT);
   }
@@ -62,99 +64,79 @@ namespace r {
   void Mesh::loadFromMemory(std::vector<char> bytes) {
     std::stringstream stream = std::stringstream(std::string(bytes.data(), bytes.size()));
     std::string line;
-    std::vector<glm::vec3> verts;
-    std::vector<glm::vec3> norm;
-    std::vector<glm::vec2> uv;
 
     std::vector<int> indices;
-    std::vector<float> vertOut;
-    std::vector<float> normOut;
-    std::vector<float> uvOut;
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> uvs;
 
-    float tmp[3] = { 0, 0, 0 };
-    int tmpIdx[3] = { 0, 0, 0 };
-    char *tmpPtr;
+    std::vector<int> elements;
 
-    bool fMode = false;
-    int vertIdx, uvIdx, normIdx;
-    glm::vec3 currentVertex, currentNormal;
-    glm::vec2 currentUV;
+    while (std::getline(stream, line)) {
+      if (line.compare(0, 2, "v ") == 0) {
+        glm::vec3 vert;
+        std::istringstream stream(line.substr(2));
 
-    while (std::getline(stream, line, '\n')) {
-      if (!line.compare(0, 2, "v ")) {
-        if (fMode) { continue; }
-        tmp[0] = std::strtof((char*) &line.c_str()[2], &tmpPtr);
-        tmp[1] = std::strtof(tmpPtr, &tmpPtr);
-        tmp[2] = std::strtof(tmpPtr, nullptr);
-        verts.push_back(glm::vec3(tmp[0], tmp[1], tmp[2]));
-      } else if (!line.compare(0, 3, "vt ")) {
-        if (fMode) { continue; }
-        tmp[0] = std::strtof((char*) &line.c_str()[3], &tmpPtr);
-        tmp[1] = std::strtof(tmpPtr, nullptr);
-        uv.push_back(glm::vec2(tmp[0], tmp[1]));
-      } else if (!line.compare(0, 3, "vn ")) {
-        if (fMode) { continue; }
-        tmp[0] = std::strtof((char*) &line.c_str()[3], &tmpPtr);
-        tmp[1] = std::strtof(tmpPtr, &tmpPtr);
-        tmp[2] = std::strtof(tmpPtr, nullptr);
-        norm.push_back(glm::vec3(tmp[0], tmp[1], tmp[2]));
-      } else if (!line.compare(0, 2, "f ")) {
-        if (!fMode) {
-          fMode = true;
-          std::cout << "DEBUG: reached fmode" << std::endl;
-          vertOut.resize(verts.size() * 3);
-          normOut.resize(verts.size() * 3);
-          uvOut.resize(verts.size() * 2);
-        }
+        stream >> vert.x; stream >> vert.y; stream >> vert.z;
 
-        tmpPtr = (char*) &line.c_str()[2];
-        // each vertex
+        vertices.push_back(vert);
+      } else if (line.compare(0, 3, "vn ") == 0) {
+        glm::vec3 norm;
+        std::istringstream stream(line.substr(3));
+
+        stream >> norm.x; stream >> norm.y; stream >> norm.z;
+
+        normals.push_back(norm);
+      } else if (line.compare(0, 3, "vt ") == 0) {
+        glm::vec2 uv;
+        std::istringstream stream(line.substr(3));
+
+        stream >> uv.x; stream >> uv.y;
+        uv.x = 1 - uv.x;
+        uv.y = 1 - uv.y;
+
+        uvs.push_back(uv);
+      } else if (line.compare(0, 2, "f ") == 0) {
+        std::istringstream stream(line.substr(2));
+        
         for (int i = 0; i < 3; i++) {
-          std::cout << "DEBUG: vertex ptr, str: " << tmpPtr << std::endl;
-          tmpIdx[0] = std::strtol(tmpPtr, &tmpPtr, 10);
+          int vIdx, uvIdx, nIdx;
+          stream >> vIdx;
+          stream.ignore();
+          stream >> uvIdx;
+          stream.ignore();
+          stream >> nIdx;
 
-          tmpIdx[1] = std::strtol(&tmpPtr[1], &tmpPtr, 10);
-          tmpIdx[2] = std::strtol(&tmpPtr[1], &tmpPtr, 10);
-          vertIdx = tmpIdx[0] - 1;
-          uvIdx = tmpIdx[1] - 1;
-          normIdx = tmpIdx[2] - 1;
+          vIdx--; uvIdx--; nIdx--;
 
-          std::cout << "DEBUG: reached vertex " << vertIdx << std::endl;
-          
-          for (auto index : indices) {
-            if (vertIdx == index) {
-              std::cout << "DEBUG: dupe index " << index << ", ignoring" << std::endl;
-              continue;
-            }
-          }
-          indices.push_back(vertIdx);
-          std::cout << "DEBUG: loaded index" << std::endl;
-
-          currentVertex = verts[vertIdx];
-          currentUV = uv[uvIdx];
-          currentNormal = norm[normIdx];
-
-          vertOut[vertIdx * 3] = currentVertex.x;
-          vertOut[vertIdx * 3 + 1] = currentVertex.y;
-          vertOut[vertIdx * 3 + 2] = currentVertex.z;
-          std::cout << "DEBUG: loaded vertices" << std::endl;
-          uvOut[uvIdx * 2] = currentUV.x;
-          uvOut[uvIdx * 2 + 1] = currentUV.y;
-          std::cout << "DEBUG: loaded uv" << std::endl;
-          normOut[normIdx * 3] = currentNormal.x;
-          normOut[normIdx * 3 + 1] = currentNormal.y;
-          normOut[normIdx * 3 + 2] = currentNormal.z;
-          std::cout << "DEBUG: loaded normal" << std::endl;
+          elements.push_back(vIdx);
+          elements.push_back(uvIdx);
+          elements.push_back(nIdx);
         }
       }
     }
 
-    std::cout << "DEBUG: reached load: " << verts.size() << " vertices" << std::endl;
-
+    std::cout << "DEBUG: vertices size: " << vertices.size() << std::endl;
+    std::vector<glm::vec2> uvOut(vertices.size());
+    std::vector<glm::vec3> normalOut(vertices.size());
+    for (int i = 0; i < elements.size(); i += 3) { 
+      GLuint vIdx = elements[i];
+      GLuint uvIdx = elements[i + 1];
+      GLuint nIdx = elements[i + 2];
+      std::cout << "DEBUG: vIdx = " << vIdx << std::endl;
+      
+      indices.push_back(vIdx);
+      std::cout << "DEBUG: loaded index" << std::endl;
+      uvOut[vIdx] = uvs[uvIdx];
+      std::cout << "DEBUG: loaded uv" << std::endl;
+      normalOut[vIdx] = normals[nIdx];
+      std::cout << "DEBUG: loaded normals" << std::endl;
+    }
+    
     loadIndices(indices);
-    loadVertexData(vertOut);
+    loadVertexData(vertices);
     loadUVData(uvOut);
-    loadNormalData(normOut);
+    loadNormalData(normalOut);
   }
 } // r
 

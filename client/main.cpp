@@ -73,7 +73,8 @@ int main() {
   camera.loadProjection(pipeline);
 
   sh::Entity entity;
-  entity.pos = glm::vec3(0, 0, -2);
+  entity.pos = glm::vec3(0, 0, -10);
+  entity.rot = glm::angleAxis(glm::radians(-20.f), glm::vec3(1,0,0));
 
   r::Mesh mesh;
   mesh.loadFromMemory(gregolanJr);
@@ -84,14 +85,17 @@ int main() {
   std::cout << mesh.getVertexCount() << std::endl;
 
   glm::vec3 up = glm::vec3(0.f, 1.f, 0.f);
-  glm::quat uprot = glm::angleAxis(glm::radians(1.f), up);
+  glm::quat uprot = glm::angleAxis(glm::radians(2.f), up);
 
 	while (!display.shouldClose()) {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(1.f, 0.f, 0.f, 1.f);
 
-//    entity.pos += glm::vec3(0, 0, -0.1f);
-//    camera.rot *= uprot;
+    glm::quat lookyUpDown = glm::angleAxis(glm::radians(glm::sin((float) glfwGetTime() * 5.f) * 2), glm::vec3(1.f, 0.f, 0.f));
+    entity.rot *= lookyUpDown;
+    entity.rot *= uprot;
+    
     pipeline.use();
 
     camera.loadView(pipeline);
