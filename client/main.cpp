@@ -90,7 +90,7 @@ int main() {
 	while (!display.shouldClose()) {
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(1.f, 0.f, 0.f, 1.f);
+		glClearColor(0.f, 0.f, 0.f, 1.f);
 
     glm::quat lookyUpDown = glm::angleAxis(glm::radians(glm::sin((float) glfwGetTime() * 5.f) * 2), glm::vec3(1.f, 0.f, 0.f));
     entity.rot *= lookyUpDown;
