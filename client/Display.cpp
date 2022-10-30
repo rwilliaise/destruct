@@ -7,6 +7,7 @@
 namespace r {
 	
 	Display::Display() {
+    glfwWindowHint(GLFW_SAMPLES, 4);
 		GLFWwindow* win = glfwCreateWindow(640, 480, "DESTRUCT", nullptr, nullptr);
 		glfwMakeContextCurrent(win);
 		gladLoadGL((GLADloadfunc) glfwGetProcAddress);
@@ -15,8 +16,16 @@ namespace r {
     glfwSetFramebufferSizeCallback(win, [](GLFWwindow* win, int width, int height) {
       Display *display = static_cast<Display*>(glfwGetWindowUserPointer(win));
       glViewport(0, 0, width, height);
-      if (display->cb != nullptr) {
-        display->cb(width, height);
+      if (display->framebufferSizeCallback != nullptr) {
+        display->framebufferSizeCallback(width, height);
+      }
+    });
+
+    glfwSetCursorPosCallback(win, [](GLFWwindow* win, double xPos, double yPos) {
+      Display *display = static_cast<Display*>(glfwGetWindowUserPointer(win));
+
+      if (display->cursorPosCallback != nullptr) {
+        display->cursorPosCallback(xPos, yPos);
       }
     });
 

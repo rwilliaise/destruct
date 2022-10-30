@@ -10,16 +10,22 @@
 
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
+#include <algorithm>
 #include <cstdio>
+#include <ctime>
 #include <glad/gl.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/quaternion_transform.hpp>
 #include <glm/ext/quaternion_trigonometric.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <stdint.h>
 #include <stdio.h>
+#include <time.h>
+
+static constexpr int MOUSE_LOOK_SCALE = 5;
 
 static auto shaderCloudVert = VEC_EMBEDDED_RESOURCE(cloud_vert);
 static auto shaderCloudFrag = VEC_EMBEDDED_RESOURCE(cloud_frag);
@@ -41,8 +47,6 @@ static void rendererErrorCallback(GLenum source,
 }
 
 int main() {
-  puts("Starting!");
-
   glfwSetErrorCallback(displayErrorCallback);
   
 	if (glfwInit() == GLFW_FALSE) {
@@ -51,15 +55,15 @@ int main() {
 
   r::Display display;
   cl::Camera camera;
-  camera.recalculateProjection(glm::radians(70.f), display.getAspect());
+  camera.recalculateProjection(glm::radians(50.f), display.getAspect());
 
   glEnable(GL_DEBUG_OUTPUT);
   glDebugMessageCallback(rendererErrorCallback, 0);
 
   r::Pipeline pipeline;
 
-  display.setFramebufferSizeCallback([&camera, &pipeline](int width, int height) {
-    camera.recalculateProjection(glm::radians(70.f), (float) width / height);
+  display.setFramebufferSizeCallback([&](int width, int height) {
+    camera.recalculateProjection(glm::radians(50.f), (float) width / height);
     camera.loadProjection(pipeline);
   });
 
@@ -74,39 +78,53 @@ int main() {
 
   sh::Entity entity;
   entity.pos = glm::vec3(0, 0, -10);
-  //entity.rot = glm::angleAxis(glm::radians(-20.f), glm::vec3(1,0,0));
 
   r::Mesh mesh;
   mesh.loadFromMemory(gregolanJr);
 
+  glm::vec3 up = glm::vec3(0.f, -1.f, 0.f);
+  glm::quat targetRot = sh::QUAT_FORWARD;
+
+  display.setCursorPosCallback([&](double x, double y) {
+    int width, height;
+    glfwGetFramebufferSize(display.get(), &width, &height);
+
+    // from -1 to 1
+    double xRatio = -(x / width - 0.5) * 2;
+    double yRatio = (y / height - 0.5) * 2;
+    double aspect = display.getAspect();
+
+    glm::vec3 target = glm::vec3(xRatio * aspect * MOUSE_LOOK_SCALE, yRatio * MOUSE_LOOK_SCALE, -MOUSE_LOOK_SCALE); 
+
+    targetRot = glm::quatLookAt(glm::normalize(target - entity.pos), up);
+  });
+
   r::Texture texture;
   texture.loadFromBytes(std::vector<uint8_t>(gregolanJrTxt.begin(), gregolanJrTxt.end()));
 
-  std::cout << mesh.getVertexCount() << std::endl;
+  glEnable(GL_MULTISAMPLE);
 
-  glm::vec3 up = glm::vec3(0.f, 1.f, 0.f);
-  glm::quat uprot = glm::angleAxis(glm::radians(2.f), up);
+  double lastTime = std::clock();
 
 	while (!display.shouldClose()) {
+    double delta = (std::clock() - lastTime) / CLOCKS_PER_SEC;
+    lastTime = std::clock();
+    
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 
-    glm::quat lookyUpDown = glm::angleAxis(glm::radians(glm::sin((float) glfwGetTime() * 5.f)), glm::vec3(1.f, 0.f, 0.f));
-    entity.rot *= lookyUpDown;
-    entity.rot *= uprot;
-    
+    entity.rot = glm::slerp(entity.rot, targetRot, std::min(10.f * static_cast<float>(delta), 0.5f));
+
     pipeline.use();
 
     camera.loadView(pipeline);
     pipeline.transform(entity);
 
-    mesh.bind();
     glActiveTexture(GL_TEXTURE0);
     texture.bind();
-    glDrawElements(GL_TRIANGLES, mesh.getVertexCount(), GL_UNSIGNED_INT, 0);
+    mesh.draw();
     texture.release();
-    mesh.release();
 
     r::unuse();
     

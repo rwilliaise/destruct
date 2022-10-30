@@ -13,8 +13,13 @@ namespace r {
 	class Display {
 	public:
     using FramebufferSizeCallback = std::function<void (int, int)>;
+    using CursorPosCallback = std::function<void (double x, double y)>;
 
 		Display();
+
+    inline GLFWwindow *get() {
+      return win.get();
+    }
 		
 		inline bool shouldClose() {
 			return glfwWindowShouldClose(this->win.get());
@@ -23,6 +28,10 @@ namespace r {
 		inline bool getKey(int key) {
 			return glfwGetKey(win.get(), key);
 		}
+
+    inline bool getMouseButton(int mouseButton) {
+      return glfwGetMouseButton(win.get(), mouseButton);
+    }
 
     inline float getAspect() {
       int width, height;
@@ -33,11 +42,17 @@ namespace r {
 		void poll();
 
     inline void setFramebufferSizeCallback(FramebufferSizeCallback callback) {
-      cb = callback;
+      framebufferSizeCallback = callback;
+    }
+
+    inline void setCursorPosCallback(CursorPosCallback callback) {
+      cursorPosCallback = callback;
     }
 	private:
 		std::shared_ptr<GLFWwindow> win;
-    FramebufferSizeCallback cb = nullptr;
+
+    FramebufferSizeCallback framebufferSizeCallback = nullptr;
+    CursorPosCallback cursorPosCallback = nullptr;
 	};
 
 }

@@ -27,6 +27,8 @@ namespace r {
 
     void loadFromMemory(std::vector<char> bytes);
 
+    void draw() const;
+
     inline void bind() const {
       glBindVertexArray(vao);
 
@@ -46,9 +48,11 @@ namespace r {
     inline GLsizei getVertexCount() { return vertexCount; }
 
   private:
-    GLuint vao;
+    GLuint vao = 0;
     GLuint vbo[4];
     GLsizei vertexCount = 0;
+
+    bool useIndexBuffer = false;
 
     std::vector<GLuint> attributes;
 

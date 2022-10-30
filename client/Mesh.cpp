@@ -29,6 +29,7 @@ namespace r {
 
   void Mesh::loadIndices(std::vector<int> index) {
     vertexCount = index.size();
+    useIndexBuffer = true;
 
     bind();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[3]);
@@ -61,11 +62,21 @@ namespace r {
     loadStaticData(norm, 3, 2, GL_FLOAT);
   }
 
+  void Mesh::draw() const {
+    bind();
+    // TODO: non-triangulated models?
+    if (useIndexBuffer) {
+      glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, nullptr);
+    } else {
+      glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+    }
+    release();
+  }
+
   void Mesh::loadFromMemory(std::vector<char> bytes) {
     std::stringstream stream = std::stringstream(std::string(bytes.data(), bytes.size()));
     std::string line;
 
-    std::vector<int> indices;
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> normals;
     std::vector<glm::vec2> uvs;
@@ -102,9 +113,9 @@ namespace r {
         for (int i = 0; i < 3; i++) {
           int vIdx, uvIdx, nIdx;
           stream >> vIdx;
-          stream.ignore();
+          stream.ignore(); // '/'
           stream >> uvIdx;
-          stream.ignore();
+          stream.ignore(); // '/'
           stream >> nIdx;
 
           vIdx--; uvIdx--; nIdx--;
@@ -116,23 +127,22 @@ namespace r {
       }
     }
 
-    std::cout << "DEBUG: vertices size: " << vertices.size() << std::endl;
-    std::vector<glm::vec2> uvOut(vertices.size());
-    std::vector<glm::vec3> normalOut(vertices.size());
+    std::vector<glm::vec2> uvOut;
+    std::vector<glm::vec3> normalOut;
+    std::vector<glm::vec3> verticesOut;
     for (int i = 0; i < elements.size(); i += 3) { 
       GLuint vIdx = elements[i];
       GLuint uvIdx = elements[i + 1];
       GLuint nIdx = elements[i + 2];
       
-      indices.push_back(vIdx);
-      
-      uvOut[vIdx] = uvs[uvIdx];
-      normalOut[vIdx] = normals[nIdx];
+      uvOut.push_back(uvs[uvIdx]);
+      normalOut.push_back(normals[nIdx]);
+      verticesOut.push_back(vertices[vIdx]);
     }
 
+    vertexCount = verticesOut.size();
     
-    loadIndices(indices);
-    loadVertexData(vertices);
+    loadVertexData(verticesOut);
     loadUVData(uvOut);
     loadNormalData(normalOut);
   }
