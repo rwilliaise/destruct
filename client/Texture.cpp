@@ -26,16 +26,16 @@ namespace r {
 
     image.format = PNG_FORMAT_RGB;
     
-    uint8_t buff[PNG_IMAGE_SIZE(image)];
-    success = png_image_finish_read(&image, nullptr, buff, 0, nullptr);
-
+    std::vector<uint8_t> buff(PNG_IMAGE_SIZE(image));
+    success = png_image_finish_read(&image, nullptr, buff.data(), 0, nullptr);
+    
     if (!success) {
       png_image_free(&image);
       return;
     }
 
     bind();
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, buff);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, buff.data());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     release();

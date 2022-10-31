@@ -27,10 +27,17 @@
 
 static constexpr int MOUSE_LOOK_SCALE = 5;
 
-static auto shaderCloudVert = VEC_EMBEDDED_RESOURCE(cloud_vert);
-static auto shaderCloudFrag = VEC_EMBEDDED_RESOURCE(cloud_frag);
-static auto gregolanJrTxt = VEC_EMBEDDED_RESOURCE(gregolan_jr_png);
-static auto gregolanJr = VEC_EMBEDDED_RESOURCE(gregolan_jr_obj);
+// shaders
+static auto diffuse_vert = VEC_EMBEDDED_RESOURCE(diffuse_vert);
+static auto diffuse_frag = VEC_EMBEDDED_RESOURCE(diffuse_frag);
+
+// textures
+static auto gregolan_txt = VEC_EMBEDDED_RESOURCE(gregolan_png);
+static auto gregolan_jr_txt = VEC_EMBEDDED_RESOURCE(gregolan_jr_png);
+
+// models
+static auto gregolan = VEC_EMBEDDED_RESOURCE(gregolan_obj);
+static auto gregolan_jr = VEC_EMBEDDED_RESOURCE(gregolan_jr_obj);
 
 static void displayErrorCallback(int errorCode, const char *description) {
   std::cerr << "GLFW ERROR (" << errorCode << "): " << description << std::endl;
@@ -67,8 +74,8 @@ int main() {
     camera.loadProjection(pipeline);
   });
 
-  std::string vert = std::string(shaderCloudVert.data(), shaderCloudVert.size());
-  std::string frag = std::string(shaderCloudFrag.data(), shaderCloudFrag.size());
+  std::string vert = std::string(diffuse_vert.data(), diffuse_vert.size());
+  std::string frag = std::string(diffuse_frag.data(), diffuse_frag.size());
 
   pipeline.compile(vert, frag);
   pipeline.bindAttrib(0, "position");
@@ -76,14 +83,14 @@ int main() {
 
   camera.loadProjection(pipeline);
 
-  sh::Entity entity;
-  entity.pos = glm::vec3(0, 0, -10);
-
-  r::Mesh mesh;
-  mesh.loadFromMemory(gregolanJr);
+  sh::Entity gregolanJrEntity;
+  sh::Entity gregolanEntity;
+  gregolanJrEntity.pos = glm::vec3(3, 0, -10);
+  gregolanEntity.pos = glm::vec3(-3, 0, -10);
 
   glm::vec3 up = glm::vec3(0.f, -1.f, 0.f);
-  glm::quat targetRot = sh::QUAT_FORWARD;
+  glm::quat gregolanJrTarget = sh::QUAT_FORWARD;
+  glm::quat gregolanTarget = sh::QUAT_FORWARD;
 
   display.setCursorPosCallback([&](double x, double y) {
     int width, height;
@@ -94,13 +101,20 @@ int main() {
     double yRatio = (y / height - 0.5) * 2;
     double aspect = display.getAspect();
 
-    glm::vec3 target = glm::vec3(xRatio * aspect * MOUSE_LOOK_SCALE, yRatio * MOUSE_LOOK_SCALE, -MOUSE_LOOK_SCALE); 
-
-    targetRot = glm::quatLookAt(glm::normalize(target - entity.pos), up);
+    glm::vec3 target = glm::vec3(xRatio * aspect * 4, yRatio * 4, -7); 
+    gregolanJrTarget = glm::quatLookAt(glm::normalize(target - gregolanJrEntity.pos), up);
+    gregolanTarget = glm::quatLookAt(glm::normalize(gregolanEntity.pos - target), up);
   });
 
-  r::Texture texture;
-  texture.loadFromBytes(std::vector<uint8_t>(gregolanJrTxt.begin(), gregolanJrTxt.end()));
+  r::Mesh gregolanJrMesh;
+  r::Mesh gregolanMesh;
+  gregolanJrMesh.loadFromMemory(gregolan_jr);
+  gregolanMesh.loadFromMemory(gregolan);
+
+  r::Texture gregolanJrTexture;
+  r::Texture gregolanTexture;
+  gregolanJrTexture.loadFromBytes(std::vector<uint8_t>(gregolan_jr_txt.begin(), gregolan_jr_txt.end()));
+  gregolanTexture.loadFromBytes(std::vector<uint8_t>(gregolan_txt.begin(), gregolan_txt.end()));
 
   glEnable(GL_MULTISAMPLE);
 
@@ -114,17 +128,23 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 
-    entity.rot = glm::slerp(entity.rot, targetRot, std::min(10.f * static_cast<float>(delta), 0.5f));
+    gregolanJrEntity.rot = glm::slerp(gregolanJrEntity.rot, gregolanJrTarget, std::min(10.f * static_cast<float>(delta), 0.5f));
+    gregolanEntity.rot = glm::slerp(gregolanEntity.rot, gregolanTarget, std::min(10.f * static_cast<float>(delta), 0.5f));
 
     pipeline.use();
 
     camera.loadView(pipeline);
-    pipeline.transform(entity);
-
     glActiveTexture(GL_TEXTURE0);
-    texture.bind();
-    mesh.draw();
-    texture.release();
+    
+    pipeline.transform(gregolanJrEntity);
+    gregolanJrTexture.bind();
+    gregolanJrMesh.draw();
+    gregolanJrTexture.release();
+
+    pipeline.transform(gregolanEntity);
+    gregolanTexture.bind();
+    gregolanMesh.draw();
+    gregolanTexture.release();
 
     r::unuse();
     
