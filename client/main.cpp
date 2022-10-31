@@ -78,7 +78,6 @@ int main() {
   std::string frag = std::string(diffuse_frag.data(), diffuse_frag.size());
 
   pipeline.compile(vert, frag);
-  pipeline.bindAttrib(0, "position");
   pipeline.link();
 
   camera.loadProjection(pipeline);

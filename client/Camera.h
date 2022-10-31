@@ -14,12 +14,18 @@
 
 namespace cl {
   
+  /**
+   * Helper class to seperate some projection and view matrix calculations out
+   * of r::Pipeline and main.cpp.
+   */
   class Camera {
   public:
-    //Camera();
     
+    /** Calculate view matrix from current position and rotation. */
     glm::mat4 getViewMatrix() const;
+    /** Load projection matrix uniform into shader pipeline. */
     void loadProjection(r::Pipeline& pipeline) const;
+    /** Calculate view matrix, then load it into shader pipeline. */
     void loadView(r::Pipeline& pipeline) const;
 
     inline void recalculateProjection(float fovy, float aspect) {
@@ -31,6 +37,7 @@ namespace cl {
     glm::vec3 pos = glm::vec3();
     glm::quat rot = sh::QUAT_FORWARD;
   private:
+    /** Used to transform coordinates into perspective projected coordinates. */
     glm::mat4 projection = glm::identity<glm::mat4>();
   };
 }

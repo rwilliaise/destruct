@@ -9,6 +9,9 @@
 
 namespace r {
   
+  /**
+   * OpenGL texture management and PNG loading.
+   */
   class Texture {
   public:
     Texture();
@@ -19,6 +22,7 @@ namespace r {
     Texture& operator=(const Texture&) noexcept = delete;
     Texture& operator=(Texture&&) noexcept = default;
     
+    /** Load image as a PNG from given bytes */
     void loadFromBytes(std::vector<uint8_t> bytes);
 
     inline void bind() const {

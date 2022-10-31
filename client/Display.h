@@ -9,12 +9,15 @@
 
 namespace r {
 
-
+  /**
+   * Smart pointer wrapper for GLFWwindow *.
+   */
 	class Display {
 	public:
     using FramebufferSizeCallback = std::function<void (int, int)>;
     using CursorPosCallback = std::function<void (double x, double y)>;
 
+    /** Initializes smart pointer and callbacks. */
 		Display();
 
     inline GLFWwindow *get() {
@@ -33,12 +36,14 @@ namespace r {
       return glfwGetMouseButton(win.get(), mouseButton);
     }
 
+    /** Calculate aspect ratio of current frame buffer. */
     inline float getAspect() {
       int width, height;
       glfwGetFramebufferSize(win.get(), &width, &height);
       return (float) width / height;
     }
 
+    /** Poll window events and flush frame buffer. */
 		void poll();
 
     inline void setFramebufferSizeCallback(FramebufferSizeCallback callback) {
