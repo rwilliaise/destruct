@@ -1,6 +1,5 @@
 
-#ifndef DESTRUCT_WORLD_SPAWN_ENTITY_H
-#define DESTRUCT_WORLD_SPAWN_ENTITY_H
+#pragma once
 
 #include "Entity.h"
 #include "LinearMath/btVector3.h"
@@ -20,4 +19,3 @@ namespace sh {
 	};
 } // sh
 
-#endif // DESTRUCT_WORLD_SPAWN_ENTITY_H

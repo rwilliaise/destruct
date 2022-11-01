@@ -1,6 +1,5 @@
 
-#ifndef DESTRUCT_TEXTURE_H
-#define DESTRUCT_TEXTURE_H
+#pragma once
 
 #include "Render.h"
 
@@ -37,6 +36,4 @@ namespace r {
 		GLuint id;
 	};
 }
-
-#endif // DESTRUCT_TEXTURE_H
 

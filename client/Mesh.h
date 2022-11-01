@@ -1,6 +1,5 @@
 
-#ifndef DESTRUCT_MODEL_H
-#define DESTRUCT_MODEL_H
+#pragma once
 
 #include "Render.h"
 
@@ -85,4 +84,3 @@ namespace r {
 	};
 } // r
 
-#endif // DESTRUCT_MODEL_H

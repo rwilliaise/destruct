@@ -1,6 +1,5 @@
 
-#ifndef DESTRUCT_ENTITY_H
-#define DESTRUCT_ENTITY_H
+#pragma once
 
 #include "Util.h"
 #include <glm/common.hpp>
@@ -24,4 +23,3 @@ namespace sh {
 	};
 } // sh
 
-#endif // DESTRUCT_ENTITY_H

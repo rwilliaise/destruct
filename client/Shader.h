@@ -1,6 +1,5 @@
 
-#ifndef DESTRUCT_SHADER_H
-#define DESTRUCT_SHADER_H
+#pragma once
 
 #include "Entity.h"
 #include "Render.h"
@@ -73,4 +72,3 @@ namespace r {
 	};
 } // r
 
-#endif // DESTRUCT_SHADER_H

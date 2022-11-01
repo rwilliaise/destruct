@@ -1,6 +1,5 @@
 
-#ifndef DESTRUCT_UTIL_H
-#define DESTRUCT_UTIL_H
+#pragma once 
 
 #include <LinearMath/btVector3.h>
 #include <glm/glm.hpp>
@@ -31,4 +30,3 @@ namespace sh {
 	glm::vec3 fromBtVec(const btVector3 &vec);
 } // sh
 
-#endif // DESTRUCT_UTIL_H

@@ -1,6 +1,5 @@
 
-#ifndef DESTRUCT_PLAYER_ENTITY_H
-#define DESTRUCT_PLAYER_ENTITY_H
+#pragma once
 
 #include "Entity.h"
 
@@ -11,4 +10,3 @@ namespace sh {
 	};
 } // sh 
 
-#endif // DESTRUCT_PLAYER_ENTITY_H

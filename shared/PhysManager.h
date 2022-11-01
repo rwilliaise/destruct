@@ -1,6 +1,5 @@
 
-#ifndef DESTRUCT_PHYSMANAGER_H
-#define DESTRUCT_PHYSMANAGER_H
+#pragma once
 
 #include <btBulletDynamicsCommon.h>
 #include <memory>
@@ -28,4 +27,3 @@ namespace sh {
 
 } // sh
 
-#endif //DESTRUCT_PHYSMANAGER_H

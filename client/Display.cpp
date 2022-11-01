@@ -1,7 +1,8 @@
 
 #include "Display.h" 
 #include "Render.h"
-#include "glad/gl.h"
+
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
 namespace r {

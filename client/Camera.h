@@ -1,6 +1,5 @@
 
-#ifndef DESTRUCT_CAMERA_H
-#define DESTRUCT_CAMERA_H
+#pragma once
 
 #include "Shader.h"
 #include "Util.h"
@@ -42,4 +41,3 @@ namespace cl {
 	};
 }
 
-#endif // DESTRUCT_CAMERA_H

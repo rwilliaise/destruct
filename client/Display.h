@@ -1,6 +1,5 @@
 
-#ifndef DESTRUCT_DISPLAY_H
-#define DESTRUCT_DISPLAY_H
+#pragma once
 
 #include <memory>
 #include <functional>
@@ -62,4 +61,3 @@ namespace r {
 
 }
 
-#endif // DESTRUCT_DISPLAY_H
