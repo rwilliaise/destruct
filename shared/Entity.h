@@ -12,15 +12,15 @@ namespace sh {
 	public:
 		// Entity();
 
-    inline glm::mat4 toModelMatrix() const {
-      glm::mat4 translate = glm::translate(glm::identity<glm::mat4>(), pos);
-      glm::mat4 rotate = glm::mat4_cast(rot);
+		inline glm::mat4 toModelMatrix() const {
+			glm::mat4 translate = glm::translate(glm::identity<glm::mat4>(), pos);
+			glm::mat4 rotate = glm::mat4_cast(rot);
 
-      return translate * rotate;
-    }
+			return translate * rotate;
+		}
 		
-    glm::vec3 pos = glm::vec3();
-    glm::quat rot = QUAT_FORWARD;
+		glm::vec3 pos = glm::vec3();
+		glm::quat rot = QUAT_FORWARD;
 	};
 } // sh
 

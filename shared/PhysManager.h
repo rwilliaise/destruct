@@ -7,24 +7,24 @@
 
 namespace sh {
 
-    class PhysManager {
-    public:
-//        PhysManager();
+		class PhysManager {
+		public:
+//				PhysManager();
 
-        void step(float delta);
+				void step(float delta);
 
-    private:
-        btDefaultCollisionConfiguration colConfig = btDefaultCollisionConfiguration();
-        btCollisionDispatcher colDispatch = btCollisionDispatcher(&this->colConfig);
-        std::unique_ptr<btBroadphaseInterface> broadphase = std::make_unique<btDbvtBroadphase>();
-        btSequentialImpulseConstraintSolver solver;
-        btDiscreteDynamicsWorld world = btDiscreteDynamicsWorld(
-                &colDispatch,
-                broadphase.get(),
-                &solver,
-                &colConfig
-        );
-    };
+		private:
+				btDefaultCollisionConfiguration colConfig = btDefaultCollisionConfiguration();
+				btCollisionDispatcher colDispatch = btCollisionDispatcher(&this->colConfig);
+				std::unique_ptr<btBroadphaseInterface> broadphase = std::make_unique<btDbvtBroadphase>();
+				btSequentialImpulseConstraintSolver solver;
+				btDiscreteDynamicsWorld world = btDiscreteDynamicsWorld(
+								&colDispatch,
+								broadphase.get(),
+								&solver,
+								&colConfig
+				);
+		};
 
 } // sh
 

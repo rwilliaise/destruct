@@ -12,4 +12,4 @@ namespace sh {
 		return glm::vec3(vec.x(), vec.y(), vec.z());
 	}
 } // sh
-  
+	

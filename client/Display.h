@@ -9,20 +9,20 @@
 
 namespace r {
 
-  /**
-   * Smart pointer wrapper for GLFWwindow *.
-   */
+	/**
+	 * Smart pointer wrapper for GLFWwindow *.
+	 */
 	class Display {
 	public:
-    using FramebufferSizeCallback = std::function<void (int, int)>;
-    using CursorPosCallback = std::function<void (double x, double y)>;
+		using FramebufferSizeCallback = std::function<void (int, int)>;
+		using CursorPosCallback = std::function<void (double x, double y)>;
 
-    /** Initializes smart pointer and callbacks. */
+		/** Initializes smart pointer and callbacks. */
 		Display();
 
-    inline GLFWwindow *get() {
-      return win.get();
-    }
+		inline GLFWwindow *get() {
+			return win.get();
+		}
 		
 		inline bool shouldClose() {
 			return glfwWindowShouldClose(this->win.get());
@@ -32,32 +32,32 @@ namespace r {
 			return glfwGetKey(win.get(), key);
 		}
 
-    inline bool getMouseButton(int mouseButton) {
-      return glfwGetMouseButton(win.get(), mouseButton);
-    }
+		inline bool getMouseButton(int mouseButton) {
+			return glfwGetMouseButton(win.get(), mouseButton);
+		}
 
-    /** Calculate aspect ratio of current frame buffer. */
-    inline float getAspect() {
-      int width, height;
-      glfwGetFramebufferSize(win.get(), &width, &height);
-      return (float) width / height;
-    }
+		/** Calculate aspect ratio of current frame buffer. */
+		inline float getAspect() {
+			int width, height;
+			glfwGetFramebufferSize(win.get(), &width, &height);
+			return (float) width / height;
+		}
 
-    /** Poll window events and flush frame buffer. */
+		/** Poll window events and flush frame buffer. */
 		void poll();
 
-    inline void setFramebufferSizeCallback(FramebufferSizeCallback callback) {
-      framebufferSizeCallback = callback;
-    }
+		inline void setFramebufferSizeCallback(FramebufferSizeCallback callback) {
+			framebufferSizeCallback = callback;
+		}
 
-    inline void setCursorPosCallback(CursorPosCallback callback) {
-      cursorPosCallback = callback;
-    }
+		inline void setCursorPosCallback(CursorPosCallback callback) {
+			cursorPosCallback = callback;
+		}
 	private:
 		std::shared_ptr<GLFWwindow> win;
 
-    FramebufferSizeCallback framebufferSizeCallback = nullptr;
-    CursorPosCallback cursorPosCallback = nullptr;
+		FramebufferSizeCallback framebufferSizeCallback = nullptr;
+		CursorPosCallback cursorPosCallback = nullptr;
 	};
 
 }
